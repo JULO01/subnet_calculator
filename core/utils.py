@@ -1,12 +1,14 @@
 from typing import Tuple
 import re
 
+
 class NetAdressFormatError(Exception):
     def __init__(
         self,
         message="The specified net-address did not have the required format.",
     ):
         super().__init__(message)
+
 
 def bit_not(n, numbits=32):
     return (1 << numbits) - 1 - n
@@ -67,7 +69,9 @@ def net_to_schraeger(subnet: Tuple[int, int, int, int]) -> int:
     return binary_string.count("1")
 
 
-def schraeger_str_or_net_str_to_schraeger(schraeger_or_subnet_mask: str) -> int:
+def schraeger_str_or_net_str_to_schraeger(
+    schraeger_or_subnet_mask: str,
+) -> int:
     schraeger_ex = "[0-2][0-9]$|[3][0-2]$|[0-9]$"
     schreager_result = re.match(schraeger_ex, schraeger_or_subnet_mask)
 

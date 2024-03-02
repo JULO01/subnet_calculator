@@ -19,20 +19,36 @@ class SubnetInformationOut(BaseModel):
 
 
 class NetAdress:
-    def __init__(self, address: str, schraeger_or_subnet_mask: str, take_subnet_space: bool = False):
+    def __init__(
+        self,
+        address: str,
+        schraeger_or_subnet_mask: str,
+        take_subnet_space: bool = False,
+    ):
         # Verifying the string inputs
         schraeger_str_or_net_str_to_net(schraeger_or_subnet_mask)
         net_str_to_net(address)
         _address = net_to_integer(net_str_to_net(address))
-        _subnet_int = net_to_integer(schraeger_str_or_net_str_to_net(schraeger_or_subnet_mask))
+        _subnet_int = net_to_integer(
+            schraeger_str_or_net_str_to_net(schraeger_or_subnet_mask)
+        )
 
         if take_subnet_space and _address & bit_not(_subnet_int) != 0:
-            _address = _address >> (32 - schraeger_str_or_net_str_to_schraeger(schraeger_or_subnet_mask))
+            _address = _address >> (
+                32
+                - schraeger_str_or_net_str_to_schraeger(
+                    schraeger_or_subnet_mask
+                )
+            )
             _address = _address + 1
-            _address = _address << (32 - schraeger_str_or_net_str_to_schraeger(schraeger_or_subnet_mask))
+            _address = _address << (
+                32
+                - schraeger_str_or_net_str_to_schraeger(
+                    schraeger_or_subnet_mask
+                )
+            )
 
             address = net_to_net_str(integer_to_net(_address))
-
 
         self.address = address
         self.schraeger_or_subnet_mask: str = schraeger_or_subnet_mask
@@ -88,7 +104,9 @@ def calculate_subnets(
         while (net.host_amount + 2) > 2 ** (32 - schraeger):
             schraeger -= 1
 
-        resulting_net = NetAdress(_net_address, str(schraeger), take_subnet_space=True)
+        resulting_net = NetAdress(
+            _net_address, str(schraeger), take_subnet_space=True
+        )
         _net_address = net_to_net_str(resulting_net.get_next_net())
 
         net_out = SubnetInformationOut(
@@ -100,7 +118,9 @@ def calculate_subnets(
             number_available_hosts=resulting_net.get_available_host_addresses(),
         )
         result_nets.insert(0, net_out)
-        result_nets = sorted(result_nets, key=lambda net: net_str_to_net(net.net_address))
+        result_nets = sorted(
+            result_nets, key=lambda net: net_str_to_net(net.net_address)
+        )
 
     return result_nets
 
@@ -175,7 +195,9 @@ if __name__ == "__main__":
 
         subnets_in_received = True
 
-    available_net = NetAdress(address=host_net, schraeger_or_subnet_mask=schraeger_or_net_str)
+    available_net = NetAdress(
+        address=host_net, schraeger_or_subnet_mask=schraeger_or_net_str
+    )
     resulting_nets = calculate_subnets(
         available_net, subnet_info_in, sort_nets=sorting
     )
@@ -184,14 +206,19 @@ if __name__ == "__main__":
 
     print(resulting_nets)
 
-    not_assigned = 2 ** (32 - schraeger_str_or_net_str_to_schraeger(schraeger_or_net_str))
-    not_assigned_string = f"2^(32-{schraeger_str_or_net_str_to_schraeger(schraeger_or_net_str)})"
+    not_assigned = 2 ** (
+        32 - schraeger_str_or_net_str_to_schraeger(schraeger_or_net_str)
+    )
+    not_assigned_string = (
+        f"2^(32-{schraeger_str_or_net_str_to_schraeger(schraeger_or_net_str)})"
+    )
 
-
-    last_net_broadcast = net_to_integer(net_str_to_net(resulting_nets[0].broadcast))
+    last_net_broadcast = net_to_integer(
+        net_str_to_net(resulting_nets[0].broadcast)
+    )
     available_net_broadcast = net_to_integer(available_net.get_broadcast())
 
-    if(last_net_broadcast > available_net_broadcast):
+    if last_net_broadcast > available_net_broadcast:
         print("\nWarnung: Die Subnets passen nicht in das gegebene Netz!\n")
 
     print("\nNicht zugeordnete IP-Adressen nach den Subnets: ")
