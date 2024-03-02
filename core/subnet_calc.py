@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import Tuple, List, Literal
 from rich import print
-from utils import *
+from core.utils import *
 
 
 class SubnetInformationIn(BaseModel):
@@ -61,6 +61,9 @@ class NetAdress:
 
     def get_available_host_addresses(self) -> int:
         return 2 ** (32 - self.get_schraeger()) - 2
+
+    def __str__(self):
+        return f"Netz-Adresse: {self.address}, Subnetz-Maske: {self.get_subnet_mask()}, Broadcast: {net_to_net_str(self.get_broadcast())}"
 
 
 def calculate_subnets(
